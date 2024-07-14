@@ -38,8 +38,8 @@ cd MechRentSA.Server
 ```bash
 {
   "ConnectionStrings": {
-    "DefaultConnection": "Server=.;Database=MechRentSaDB;Trusted_Connection=True;MultipleActiveResultSets=true"
-  }
+    "connection_string": "Server=(local); Database=DB_MechRentSA; User Id=TU_USUARIO; Password=TU_CONTRASEÑA; TrustServerCertificate=True;"
+  },
 }
 ```
 
@@ -72,6 +72,7 @@ dotnet run
 Una vez que ambos proyectos estén en ejecución, abre tu navegador y navega a `https://localhost:5035` para ver la aplicación en funcionamiento.
 
 ## Estructura del Proyecto
+```bash
 MechRentSA/
 ├── MechRentSA.Client/           # Proyecto del frontend (Blazor)
 ├── MechRentSA.Server/           # Proyecto del backend (ASP.NET Core)
@@ -79,6 +80,7 @@ MechRentSA/
 ├── .gitignore                   # Archivos y carpetas ignorados por Git
 ├── README.md                    # Documentación del proyecto
 └── MechRentSA.sln               # Solución de Visual Studio
+```
 
 ## API Endpoints
 
