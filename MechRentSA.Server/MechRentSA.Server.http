@@ -1,0 +1,6 @@
+@MechRentSA.Server_HostAddress = http://localhost:5095
+
+GET {{MechRentSA.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
