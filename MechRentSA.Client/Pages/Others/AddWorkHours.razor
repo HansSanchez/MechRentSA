@@ -1,0 +1,78 @@
+﻿@page "/agregar-horas"
+
+@inject HttpClient Http
+@using MechRentSA.Shared;
+@using CurrieTechnologies.Razor.SweetAlert2;
+@using MechRentSA.Client.Interfaces;
+@inject IJSRuntime JS
+@inject SweetAlertService Swal;
+@inject IExcavatorWorkLogService excavatorWorkLogService;
+@inject IPublicWorkService publicWorkService;
+@inject IExcavatorService excavatorService;
+
+<PageTitle>Agregar Horas de Trabajo</PageTitle>
+
+<h1>Agregar Horas de Trabajo</h1>
+
+<EditForm Model="workLog" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="mb-3">
+        <label for="PublicWorkId" class="form-label">Obra Pública</label>
+        <InputSelect id="PublicWorkId" class="form-select" @bind-Value="workLog.PublicWorkId">
+            <option value="">Seleccione una obra</option>
+            @foreach (var work in publicWorks)
+            {
+                <option value="@work.Id">@work.Name</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="mb-3">
+        <label for="ExcavatorId" class="form-label">Retroexcavadora</label>
+        <InputSelect id="ExcavatorId" class="form-select" @bind-Value="workLog.ExcavatorId">
+            <option value="">Seleccione una retroexcavadora</option>
+            @foreach (var excavator in excavators)
+            {
+                <option value="@excavator.Id">@excavator.Type</option>
+            }
+        </InputSelect>
+    </div>
+    <div class="mb-3">
+        <label for="HoursWorked" class="form-label">Horas Trabajadas</label>
+        <InputNumber id="HoursWorked" class="form-control" @bind-Value="workLog.HoursWorked" />
+    </div>
+    <button type="submit" class="btn btn-primary">Agregar Horas</button>
+</EditForm>
+
+@code {
+    private AddWorkHoursDTO workLog = new AddWorkHoursDTO();
+    private List<PublicWorkDTO> publicWorks = new();
+    private List<ExcavatorDTO> excavators = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        publicWorks = (await publicWorkService.GetPublicWorks("", 1, 100)).Items ?? new List<PublicWorkDTO>();
+        excavators = (await excavatorService.GetExcavators("", 1, 100)).Items ?? new List<ExcavatorDTO>();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var response = await excavatorWorkLogService.AddWorkHours(workLog);
+            if (response > 0)
+            {
+                await Swal.FireAsync("Éxito", "Las horas de trabajo han sido agregadas exitosamente.", SweetAlertIcon.Success);
+                workLog = new AddWorkHoursDTO(); // Reset the form
+            }
+            else
+            {
+                await Swal.FireAsync("Error", "Ocurrió un error al agregar las horas de trabajo.", SweetAlertIcon.Error);
+            }
+        }
+        catch (Exception ex)
+        {
+            await Swal.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
+        }
+    }
+}

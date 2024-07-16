@@ -212,5 +212,36 @@ namespace MechRentSA.Server.Controllers
 
             return Ok(responseApi);
         }
+
+        [HttpGet("getExcavatorsNearMaintenance")]
+        public async Task<IActionResult> GetExcavatorsNearMaintenance()
+        {
+            var responseApi = new ResponseAPI<List<ExcavatorDTO>>();
+            try
+            {
+                var excavators = await _dbMechRentSaContext.Excavators
+                    .Where(e => e.MaintenanceInterval - (e.TotalHoursWorked - e.LastMaintenanceHours) <= 120)
+                    .Select(e => new ExcavatorDTO
+                    {
+                        Id = e.Id,
+                        Type = e.Type,
+                        HourlyRate = e.HourlyRate,
+                        MaintenanceInterval = e.MaintenanceInterval,
+                        TotalHoursWorked = e.TotalHoursWorked,
+                        LastMaintenanceHours = e.LastMaintenanceHours
+                    }).ToListAsync();
+
+                responseApi.IsSuccessful = true;
+                responseApi.Value = excavators;
+            }
+            catch (Exception ex)
+            {
+                responseApi.IsSuccessful = false;
+                responseApi.Message = ex.Message;
+            }
+
+            return Ok(responseApi);
+        }
+
     }
 }

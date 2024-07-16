@@ -1,0 +1,96 @@
+﻿@page "/obra-publica"
+@page "/obra-publica/{id:int}"
+
+@using MechRentSA.Shared;
+@using CurrieTechnologies.Razor.SweetAlert2;
+@using MechRentSA.Client.Interfaces;
+
+@inject HttpClient Http
+@inject IJSRuntime JS
+@inject SweetAlertService Swal;
+@inject IPublicWorkService publicWorkService;
+@inject NavigationManager navegation;
+
+<PageTitle>@title</PageTitle>
+
+<h1>@title</h1>
+
+<EditForm Model="PublicWorkDTO" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator></DataAnnotationsValidator>
+
+    <div class="row">
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">
+                    Nombre <span class="text-danger">*</span>
+                </label>
+                <InputText class="form-control name" id="name"
+                       @bind-Value="PublicWorkDTO.Name"
+                       placeholder="Nombre de la obra publica Ej. Obra ABC">
+                 </InputText>
+                 <ValidationMessage For="@(() => PublicWorkDTO.Name)"></ValidationMessage>
+            </div>
+        </div>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+            <div class="form-group">
+                <label for="exampleFormControlTextarea1">
+                    Horas estimadas <span class="text-danger">*</span>
+                </label>
+                <InputNumber class="form-control coste" id="coste" min="0.00"
+                             @bind-Value="PublicWorkDTO.EstimatedHours"
+                           placeholder="Ej. 1000">
+                </InputNumber>
+                <ValidationMessage For="@(() => PublicWorkDTO.EstimatedHours)"></ValidationMessage>
+            </div>
+        </div>
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="btn-group mt-3 float-end">
+                <button class="@btnType" type="submit">
+                    @btnText
+                </button>
+                <a class="btn btn-danger" href="obras-publicas">Cancelar</a>
+            </div>
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    [Parameter]
+    public int id { get; set; } = 0;
+
+    string title = string.Empty;
+    string btnText = string.Empty;
+    string btnType = string.Empty;
+
+    PublicWorkDTO PublicWorkDTO = new PublicWorkDTO();
+
+    protected override async Task OnInitializedAsync()
+    {
+        if(id != 0)
+        {
+            PublicWorkDTO = await publicWorkService.GetByIdPublicWork(id);
+            btnText = "Actualizar";
+            btnType = "btn btn-warning";
+            title = "Editar obra pública";
+        }
+        else
+        {
+            btnText = "Guardar";
+            btnType = "btn btn-success";
+            title = "Crear obra pública";
+        }
+    }
+
+    private async Task OnValidSubmit()
+    {
+        int idAux = 0;
+        if (id == 0) idAux = await publicWorkService.StorePublicWork(PublicWorkDTO);
+        else idAux = await publicWorkService.UpdatePublicWork(PublicWorkDTO);
+
+        if (idAux != 0)
+        {
+            navegation.NavigateTo("/obras-publicas");
+        }
+    }
+
+}

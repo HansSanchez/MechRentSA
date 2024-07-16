@@ -89,6 +89,17 @@ namespace MechRentSA.Client.Services
             return response;
         }
 
-
+        public async Task<List<ExcavatorDTO>> GetExcavatorsNearMaintenance()
+        {
+            var response = await _http.GetFromJsonAsync<ResponseAPI<List<ExcavatorDTO>>>("api/Excavator/getExcavatorsNearMaintenance");
+            if (response!.IsSuccessful)
+            {
+                return response.Value!;
+            }
+            else
+            {
+                throw new Exception(response.Message);
+            }
+        }
     }
 }

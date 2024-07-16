@@ -42,5 +42,7 @@ namespace MechRentSA.Client.Interfaces
         /// <returns>Un objeto ResponseAPI que indica si la eliminación fue exitosa.</returns>
         Task<ResponseAPI<int>> DeleteExcavator(int id);
 
+        Task<List<ExcavatorDTO>> GetExcavatorsNearMaintenance();
+
     }
 }

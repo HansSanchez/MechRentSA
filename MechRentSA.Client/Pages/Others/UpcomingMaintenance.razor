@@ -1,0 +1,73 @@
+﻿@page "/mantenimiento-proximo"
+
+@inject HttpClient Http
+@using MechRentSA.Shared;
+@using CurrieTechnologies.Razor.SweetAlert2;
+@using MechRentSA.Client.Interfaces;
+@inject IJSRuntime JS
+@inject SweetAlertService Swal;
+@inject IExcavatorService excavatorService;
+
+<PageTitle>Retroexcavadoras Próximas a Mantenimiento</PageTitle>
+
+<h1>Retroexcavadoras Próximas a Mantenimiento</h1>
+
+<div class="table-responsive max-h-650">
+    <table class="table table-sm table-hover table-bordered table-condensed">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Tipo</th>
+                <th>Costo por Hora</th>
+                <th>Intervalo de Mantenimiento</th>
+                <th>Total de Horas Trabajadas</th>
+                <th>Último Mantenimiento</th>
+                <th>Horas Restantes</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (excavators == null || !excavators.Any())
+            {
+                <tr>
+                    <td colspan="7">Sin datos asociados</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var item in excavators)
+                {
+                    <tr class="text-center">
+                        <td>@item.Id</td>
+                        <td>@item.Type</td>
+                        <td>@item.HourlyRate.ToString("C", new System.Globalization.CultureInfo("es-CO"))</td>
+                        <td>@item.MaintenanceInterval</td>
+                        <td>@item.TotalHoursWorked</td>
+                        <td>@item.LastMaintenanceHours</td>
+                        <td>@(item.MaintenanceInterval - (item.TotalHoursWorked - item.LastMaintenanceHours))</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private List<ExcavatorDTO> excavators = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadExcavatorsNearMaintenance();
+    }
+
+    private async Task LoadExcavatorsNearMaintenance()
+    {
+        try
+        {
+            excavators = await excavatorService.GetExcavatorsNearMaintenance();
+        }
+        catch (Exception ex)
+        {
+            await Swal.FireAsync("Error", ex.Message, SweetAlertIcon.Error);
+        }
+    }
+}

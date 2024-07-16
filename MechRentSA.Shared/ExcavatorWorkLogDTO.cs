@@ -37,12 +37,12 @@ namespace MechRentSA.Shared
         /// <summary>
         /// Excavadora con la que se realizó el trabajo.
         /// </summary>
-        public ExcavatorDTO excavatorDTO { get; set; } = new ExcavatorDTO();
+        public ExcavatorDTO ExcavatorDTO { get; set; } = new ExcavatorDTO();
 
         /// <summary>
         /// Obra pública en la que se realizó el trabajo.
         /// </summary>
-        public PublicWorkDTO publicWorkDTO { get; set; } = new PublicWorkDTO();
+        public PublicWorkDTO PublicWorkDTO { get; set; } = new PublicWorkDTO();
     }
 
 }

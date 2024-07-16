@@ -11,8 +11,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("http://localhost:5095") });
 builder.Services.AddScoped<IExcavatorService, ExcavatorService>();
-//builder.Services.AddScoped<IPublicWorkService, PublicWorkService>();
-//builder.Services.AddScoped<IExcavatorWorkLogService, ExcavatorWorkLogService>();
+builder.Services.AddScoped<IPublicWorkService, PublicWorkService>();
+builder.Services.AddScoped<IExcavatorWorkLogService, ExcavatorWorkLogService>();
 
 builder.Services.AddSweetAlert2();
 
